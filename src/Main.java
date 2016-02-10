@@ -12,7 +12,6 @@ public class Main {
         String[] stringLinesNumber = pointCloud.toString().split("\n");
         List<Float> allPoints = new ArrayList<Float>();
 
-
         for (int i = 0; i < stringLinesNumber.length; i++) {
             String[] split = stringLinesNumber[i].split("(\t)");
             for (String s: split) {
@@ -20,19 +19,12 @@ public class Main {
             }
         }
 
+
         for (int i=0;i<(allPoints.size()/3); i++) {
-            PointsWorker.allPoints.add(new float[]{allPoints.get(3*i), allPoints.get(3*i+1), allPoints.get(3*i+2)});
+            PointsWorker.getAllPoints().add(new float[]{allPoints.get(3*i), allPoints.get(3*i+1), allPoints.get(3*i+2)});
         }
-
-        PointsWorker pointsWorker = new PointsWorker();
-        System.out.println("H: " + pointsWorker.sceneHeight + " W: " + pointsWorker.sceneWidth + " L: " + pointsWorker.sceneLength);
-
-        System.out.println("Points Count: " + PointsWorker.allPoints.size());
-
-//        System.out.println("Voxel sizes: X: " + pointsWorker.voxelGrid.length + "" +
-//                " Y: " + pointsWorker.voxelGrid[0].length + "" +
-//                " Z: " + pointsWorker.voxelGrid[0][0].length);
-
-        pointsWorker.createSurfacedPC();
+        PointsWorker pointsWorker = new PointsWorker(10);
+        pointsWorker.printStatistics();
+        pointsWorker.start();
     }
 }
