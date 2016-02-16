@@ -1,4 +1,6 @@
 import engine.FileOperations;
+import engine.PointDensityMap;
+import engine.PointHighMap;
 import engine.PointsWorker;
 
 import java.util.ArrayList;
@@ -19,12 +21,14 @@ public class Main {
             }
         }
 
-
         for (int i=0;i<(allPoints.size()/3); i++) {
             PointsWorker.getAllPoints().add(new float[]{allPoints.get(3*i), allPoints.get(3*i+1), allPoints.get(3*i+2)});
         }
-        PointsWorker pointsWorker = new PointsWorker(10);
-        pointsWorker.printStatistics();
-        pointsWorker.start();
+
+        Thread pointDensityMap = new Thread(new PointDensityMap(10, 0));
+        Thread pointHighMap = new Thread(new PointHighMap(10, 0));
+        pointDensityMap.start();
+        pointHighMap.start();
     }
+
 }
