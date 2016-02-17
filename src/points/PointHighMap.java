@@ -37,33 +37,27 @@ public class PointHighMap extends PointsWorker implements Runnable{
     public float[][] createSurfaceHigh(List<float[]> sortedList){
         float[][] surfaceHighMap = new float[yCapacity + 1][xCapacity +1];
         for (float[] f: sortedList) {
-            surfaceHighMap[(int) (yOrigin + (f[1] * mesUnits))][(int) (xOrigin + (f[0] * mesUnits))] = f[1];
+            surfaceHighMap[(int) (yOrigin + (f[1] * mesUnits))][(int) (xOrigin + (f[0] * mesUnits))] = f[2];
         }
         return surfaceHighMap;
     }
 
     @Override
-    public int[] projectTo2DDens(int[][] surface) {
-        return new int[0];
+    public void projectTo2DDens(int[][] surface) {
     }
 
     @Override
     public void findHighestPoints(float[][] surface) {
         for (int i = 0; i < surface.length - 1; i++) {
             for (int j = 0; j < surface[i].length - 1; j++) {
-                if (projectedPCTo2DHighMap[i][j] < Math.abs(surface[i][j])) {
-                    projectedPCTo2DHighMap[i][j] += Math.abs(surface[i][j]);
+                if (surface[i][j] < -0) {
+                    surface[i][j] *= -1;
+                }
+                if (projectedPCTo2DHighMap[i][j] < surface[i][j]) {
+                    projectedPCTo2DHighMap[i][j] = surface[i][j];
                 }
             }
         }
-    }
-
-    @Override
-    public void linkProjectedRows(int index, float[] row) {
-    }
-
-    @Override
-    public void linkProjectedRows(int index, int[] row) {
     }
 
     private float[] excludeNaN(float[] row) {

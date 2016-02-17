@@ -79,14 +79,14 @@ public abstract class PointsWorker implements Points{
         List<float[]> surface = new ArrayList<float[]>();
         float localUnit = 0.1f;
         if (partZ >= Math.abs(negativeWay)) {
-            // positive Y points
+            // positive Z points
             for (float[] allPoint : allPoints) {
                 if (allPoint[2] > 0 && allPoint[2] < (partZ + negativeWay) && allPoint[2] > (partZ  + negativeWay - localUnit)) {
                     surface.add(allPoint);
                 }
             }
         } else {
-            // negative Y points
+            // negative Z points
             for (float[] allPoint: allPoints) {
                 if (allPoint[2] < 0 && Math.abs(allPoint[2]) < partZ && Math.abs(allPoint[2]) > (partZ - localUnit)) {
                     surface.add(allPoint);
@@ -159,6 +159,10 @@ public abstract class PointsWorker implements Points{
         System.out.println("Xcap: " + xCapacity + " Ycap: " + yCapacity + " Zcap: " + zCapacity);
         System.out.println("Arrays Origins: [ XOrigin: " + xOrigin + "" +
                 ", YOrigin: " + yOrigin + ", ZOrigin: " + zOrigin + " ]");
+
+        System.out.println("minX: " + minX + "\t maxX: " + maxX + "\n" +
+                "minY: " + minY + "\t maxY: " + maxY + "\n" +
+                "minZ: " + minZ + "\t maxZ: " + maxZ);
     }
 
     public static List<float[]> getAllPoints() {

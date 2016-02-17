@@ -6,8 +6,6 @@ public interface Points{
 
     int[][] createSurfaceDens(List<float[]> sortedList);
     float[][] createSurfaceHigh(List<float[]> sortedList);
-    int[] projectTo2DDens(int[][] surface);
+    void projectTo2DDens(int[][] surface);
     void findHighestPoints(float[][] surface);
-    void linkProjectedRows(int index, int[] row);
-    void linkProjectedRows(int index, float[] row);
 }

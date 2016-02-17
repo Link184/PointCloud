@@ -2,7 +2,6 @@ package points;
 
 import engine.FileOperations;
 import engine.MatrixDithering;
-import engine.PointsFilter;
 
 import java.util.List;
 
@@ -16,11 +15,10 @@ public class PointDensityMap extends PointsWorker implements Runnable{
     @Override
     public void run() {
         printStatistics();
-        for (int i = 1; i < yCapacity + 1; i++) {
-            List<float[]> sortedList = sortSurfaceZX(i);
+        for (int i = 0; i < zCapacity + 1; i++) {
+            List<float[]> sortedList = sortSurfaceYX(i);
             int[][] surface = createSurfaceDens(sortedList);
-            int[] projectedRow = projectTo2DDens(surface);
-            linkProjectedRows(i, projectedRow);
+            projectTo2DDens(surface);
             System.out.print("\rProcessed... " + i + " Density units");
         }
 
@@ -28,7 +26,7 @@ public class PointDensityMap extends PointsWorker implements Runnable{
         int[][] cleanProjectedMatrix = projectedPCTo2DDensMap.clone();
 
         synchronized (PointsWorker.class) {
-            PointsFilter.cleanByHigh(projectedPCTo2DDensMap, projectedPCTo2DHighMap);
+//            PointsFilter.cleanByHigh(projectedPCTo2DDensMap, projectedPCTo2DHighMap);
 
 //
 //            //Clear low density points
@@ -58,9 +56,9 @@ public class PointDensityMap extends PointsWorker implements Runnable{
 
     @Override
     public int[][] createSurfaceDens(List<float[]> sortedList){
-        int[][] surface = new int[zCapacity + 1][xCapacity + 1];
+        int[][] surface = new int[yCapacity + 1][xCapacity + 1];
         for (float[] f: sortedList) {
-            surface[(int) (zOrigin + (f[2] * mesUnits))][(int) (xOrigin + (f[0] * mesUnits))]++;
+            surface[(int) (yOrigin + (f[1] * mesUnits))][(int) (xOrigin + (f[0] * mesUnits))]++;
         }
         return surface;
     }
@@ -75,28 +73,12 @@ public class PointDensityMap extends PointsWorker implements Runnable{
     }
 
     @Override
-    public int[] projectTo2DDens(int[][] surface){
-        int[] projectedRow = new int[surface[0].length];
-        for (int[] aSurface : surface) {
-            for (int j = 0; j < aSurface.length; j++) {
-                projectedRow[j] += aSurface[j];
+    public void projectTo2DDens(int[][] surface){
+        for (int i = 0; i < surface.length - 1; i++) {
+            for (int j = 0; j < surface[i].length - 1; j++) {
+                projectedPCTo2DDensMap[i][j] += surface[i][j];
             }
         }
-        return projectedRow;
-    }
-
-    @Override
-    public void linkProjectedRows(int index, int[] row) {
-        if (index <= yOrigin) {
-            projectedPCTo2DDensMap[Math.abs(((int) (minY * mesUnits))) - index + 1] = row;
-        } else {
-            projectedPCTo2DDensMap[index - 1] = row;
-        }
-    }
-
-    @Override
-    public void linkProjectedRows(int index, float[] row) {
-
     }
 
     public static List<float[]> getAllPoints() {
