@@ -1,4 +1,4 @@
-package engine;
+package points;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,7 @@ public abstract class PointsWorker implements Points{
         projectedPCTo2DDensMap = new int[yCapacity][xCapacity];
     }
 
-    public List<float[]> sortSurfaceZX(int surfaceDepth){
+    protected List<float[]> sortSurfaceZX(int surfaceDepth){
         float partY = ((float) surfaceDepth) / mesUnits;
         float negativeWay = minY;
         List<float[]> surface = new ArrayList<float[]>();
@@ -73,6 +73,29 @@ public abstract class PointsWorker implements Points{
         return surface;
     }
 
+    protected List<float[]> sortSurfaceYX(int surfaceDepth){
+        float partZ = ((float) surfaceDepth) / mesUnits;
+        float negativeWay = minZ;
+        List<float[]> surface = new ArrayList<float[]>();
+        float localUnit = 0.1f;
+        if (partZ >= Math.abs(negativeWay)) {
+            // positive Y points
+            for (float[] allPoint : allPoints) {
+                if (allPoint[2] > 0 && allPoint[2] < (partZ + negativeWay) && allPoint[2] > (partZ  + negativeWay - localUnit)) {
+                    surface.add(allPoint);
+                }
+            }
+        } else {
+            // negative Y points
+            for (float[] allPoint: allPoints) {
+                if (allPoint[2] < 0 && Math.abs(allPoint[2]) < partZ && Math.abs(allPoint[2]) > (partZ - localUnit)) {
+                    surface.add(allPoint);
+                }
+            }
+        }
+        return surface;
+    }
+
     protected void filterProjectedMatrix(int tolerance, int[][] projectedMatrix) {
         for (int i = 1; i<projectedMatrix.length - 1; i++) {
             for (int j = 1; j<projectedMatrix[i].length - 1; j++){
@@ -85,6 +108,16 @@ public abstract class PointsWorker implements Points{
 
     protected int[][] transposeMatrix(int[][] sourceMatrix) {
         int[][] inversedMatrix = new int[sourceMatrix[0].length][sourceMatrix.length];
+        for (int i=0; i<sourceMatrix[0].length; i++) {
+            for (int j=0; j<sourceMatrix.length; j++) {
+                inversedMatrix[i][j] = sourceMatrix[j][i];
+            }
+        }
+        return inversedMatrix;
+    }
+
+    protected float[][] transposeMatrix(float[][] sourceMatrix) {
+        float[][] inversedMatrix = new float[sourceMatrix[0].length][sourceMatrix.length];
         for (int i=0; i<sourceMatrix[0].length; i++) {
             for (int j=0; j<sourceMatrix.length; j++) {
                 inversedMatrix[i][j] = sourceMatrix[j][i];
@@ -124,7 +157,7 @@ public abstract class PointsWorker implements Points{
         System.out.println("Points Count: " + allPoints.size());
 
         System.out.println("Xcap: " + xCapacity + " Ycap: " + yCapacity + " Zcap: " + zCapacity);
-        System.out.println("Array Origins: [ XOrigin: " + xOrigin + "" +
+        System.out.println("Arrays Origins: [ XOrigin: " + xOrigin + "" +
                 ", YOrigin: " + yOrigin + ", ZOrigin: " + zOrigin + " ]");
     }
 

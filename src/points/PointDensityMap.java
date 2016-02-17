@@ -1,4 +1,8 @@
-package engine;
+package points;
+
+import engine.FileOperations;
+import engine.MatrixDithering;
+import engine.PointsFilter;
 
 import java.util.List;
 
@@ -12,7 +16,7 @@ public class PointDensityMap extends PointsWorker implements Runnable{
     @Override
     public void run() {
         printStatistics();
-        for (int i = 0; i < yCapacity; i++) {
+        for (int i = 1; i < yCapacity + 1; i++) {
             List<float[]> sortedList = sortSurfaceZX(i);
             int[][] surface = createSurfaceDens(sortedList);
             int[] projectedRow = projectTo2DDens(surface);
@@ -26,14 +30,14 @@ public class PointDensityMap extends PointsWorker implements Runnable{
         synchronized (PointsWorker.class) {
             PointsFilter.cleanByHigh(projectedPCTo2DDensMap, projectedPCTo2DHighMap);
 
-
-            //Clear low density points
+//
+//            //Clear low density points
 //            filterProjectedMatrix(tolerance, projectedPCTo2DDensMap);
 //            //Increase density of high density regions
 //            PointsFilter.computeMatrixDensity(300, projectedPCTo2DDensMap);
 //            //Clear points lower than projectedMatrix medium value
 //            PointsFilter.clearLowDensityPoints(projectedPCTo2DDensMap);
-//            //Clear low density regions
+            //Clear low density regions
 //            PointsFilter.destroyMetaPoints(projectedPCTo2DDensMap);
 
 
@@ -67,13 +71,12 @@ public class PointDensityMap extends PointsWorker implements Runnable{
     }
 
     @Override
-    public float[] projectTo2DHigh(float[][] surface) {
-        return new float[0];
+    public void findHighestPoints(float[][] surface) {
     }
 
     @Override
     public int[] projectTo2DDens(int[][] surface){
-        int[] projectedRow = new int[xCapacity+1];
+        int[] projectedRow = new int[surface[0].length];
         for (int[] aSurface : surface) {
             for (int j = 0; j < aSurface.length; j++) {
                 projectedRow[j] += aSurface[j];
@@ -87,7 +90,7 @@ public class PointDensityMap extends PointsWorker implements Runnable{
         if (index <= yOrigin) {
             projectedPCTo2DDensMap[Math.abs(((int) (minY * mesUnits))) - index + 1] = row;
         } else {
-            projectedPCTo2DDensMap[index] = row;
+            projectedPCTo2DDensMap[index - 1] = row;
         }
     }
 

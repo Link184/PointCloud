@@ -67,10 +67,10 @@ public class FileOperations {
         //Reversed print of projected matrix
         for (int i = source.length-1; i>=0 ; i--) {
             for (int j = 0; j<source[i].length; j++) {
-                if (source[i][j] < 1000) {
-                    stringBuilder.append(source[i][j]).append("\t").append("\t");
-                } else {
+                if (source[i][j] > 0f) {
                     stringBuilder.append(source[i][j]).append("\t");
+                } else {
+                    stringBuilder.append(".").append("\t").append("\t").append("\t");
                 }
             }
             stringBuilder.append("\n");
