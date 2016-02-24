@@ -5,6 +5,9 @@ import engine.FileOperations;
 import java.util.List;
 
 public class PointHighMap extends PointsWorker implements Runnable{
+    private float[][] negativeHighValues = new float[yCapacity + 1][xCapacity + 1];
+    private float[][] positiveHighValues = new float[yCapacity + 1][xCapacity + 1];
+
     public PointHighMap(int mesUnit, int tolerance) {
         super(mesUnit, tolerance);
     }
@@ -12,16 +15,16 @@ public class PointHighMap extends PointsWorker implements Runnable{
     @Override
     public void run() {
         synchronized (PointsWorker.class) {
-            System.out.println("Now we will map high points...");
             for (int i = 0; i < zCapacity; i++) {
                 List<float[]> sortedList = sortSurfaceYX(i);
                 float[][] surface = createSurfaceHigh(sortedList);
-                findHighestPoints(surface);
+                findHighestPoints(surface, i);
                 System.out.print("\rProcessed... " + i + " High units");
             }
+            linkHighMap();
             System.out.println();
 
-            FileOperations.exportToFile(projectedPCTo2DHighMap);
+            FileOperations.exportToFile(projectedPCTo2DHighMap, FileOperations.DENSITY_HIGH_FILE);
             FileOperations.printImage(projectedPCTo2DHighMap, FileOperations.HIGH_IMAGE);
 //            MatrixDithering.floydSteinbergDithering(projectedPCTo2DHighMap);
 //            FileOperations.printImage(projectedPCTo2DHighMap, FileOperations.HIGH_IMAGE_DITHERED);
@@ -47,15 +50,24 @@ public class PointHighMap extends PointsWorker implements Runnable{
     }
 
     @Override
-    public void findHighestPoints(float[][] surface) {
-        for (int i = 0; i < surface.length - 1; i++) {
-            for (int j = 0; j < surface[i].length - 1; j++) {
-                if (surface[i][j] < -0) {
-                    surface[i][j] *= -1;
+    public void findHighestPoints(float[][] surface, int index) {
+        for (int i = 0; i < surface.length; i++) {
+            for (int j = 0; j < surface[i].length; j++) {
+                float abs = Math.abs(surface[i][j]);
+                if (negativeHighValues[i][j] < abs && index <= zOrigin) {
+                    negativeHighValues[i][j] = abs;
                 }
-                if (projectedPCTo2DHighMap[i][j] < surface[i][j]) {
-                    projectedPCTo2DHighMap[i][j] = surface[i][j];
+                if (positiveHighValues[i][j] < abs && index > zOrigin) {
+                    positiveHighValues[i][j] = abs;
                 }
+            }
+        }
+    }
+
+    private void linkHighMap() {
+        for (int i = 0; i < projectedPCTo2DHighMap.length; i++) {
+            for (int j = 0; j < projectedPCTo2DHighMap[i].length; j++) {
+                projectedPCTo2DHighMap[i][j] = negativeHighValues[i][j] + positiveHighValues[i][j];
             }
         }
     }

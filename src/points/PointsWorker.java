@@ -46,15 +46,17 @@ public abstract class PointsWorker implements Points{
         int[] origins = getPCOrigin();
         xOrigin = origins[0]; yOrigin = origins[1]; zOrigin = origins[2];
 
-        projectedPCTo2DHighMap = new float[yCapacity][xCapacity];
-        projectedPCTo2DDensMap = new int[yCapacity][xCapacity];
+        projectedPCTo2DHighMap = new float[yCapacity + 1][xCapacity + 1];
+        projectedPCTo2DDensMap = new int[yCapacity + 1][xCapacity + 1];
+
+        printStatistics();
     }
 
     protected List<float[]> sortSurfaceZX(int surfaceDepth){
         float partY = ((float) surfaceDepth) / mesUnits;
         float negativeWay = minY;
         List<float[]> surface = new ArrayList<float[]>();
-        float localUnit = 0.1f;
+        float localUnit = 0.01f;
         if (partY >= Math.abs(negativeWay)) {
             // positive Y points
             for (float[] allPoint : allPoints) {
@@ -73,7 +75,8 @@ public abstract class PointsWorker implements Points{
         return surface;
     }
 
-    protected List<float[]> sortSurfaceYX(int surfaceDepth){
+    @Override
+    public List<float[]> sortSurfaceYX(int surfaceDepth){
         float partZ = ((float) surfaceDepth) / mesUnits;
         float negativeWay = minZ;
         List<float[]> surface = new ArrayList<float[]>();
@@ -94,6 +97,11 @@ public abstract class PointsWorker implements Points{
             }
         }
         return surface;
+    }
+
+    @Override
+    public int[][] createSurfaceDens(List<float[]> sortedList) {
+        return new int[0][];
     }
 
     protected void filterProjectedMatrix(int tolerance, int[][] projectedMatrix) {

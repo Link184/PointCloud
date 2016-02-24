@@ -9,6 +9,8 @@ public class FileOperations {
     public static final String DENSITY_IMAGE_DITHERED = "density_image_dithered.png";
     public static final String HIGH_IMAGE = "high_image.png";
     public static final String HIGH_IMAGE_DITHERED = "high_image_dithered.png";
+    public static final String DENSITY_DENSITY_FILE = "fileDens.txt";
+    public static final String DENSITY_HIGH_FILE = "fileHigh.txt";
 
     public static StringBuilder readPC(){
         StringBuilder stringBuilder = new StringBuilder();
@@ -31,8 +33,8 @@ public class FileOperations {
         return stringBuilder;
     }
 
-    public static void exportToFile(int[][] source){
-        File file = new File("source", "fileDens.txt");
+    public static void exportToFile(int[][] source, String fileName){
+        File file = new File("source", fileName);
         StringBuilder stringBuilder = new StringBuilder();
 
         //Reversed print of projected matrix
@@ -60,14 +62,14 @@ public class FileOperations {
         }
     }
 
-    public static void exportToFile(float[][] source){
-        File file = new File("source", "fileHigh.txt");
+    public static void exportToFile(float[][] source, String fileName){
+        File file = new File("source", fileName);
         StringBuilder stringBuilder = new StringBuilder();
 
         //Reversed print of projected matrix
         for (int i = source.length-1; i>=0 ; i--) {
             for (int j = 0; j<source[i].length; j++) {
-                if (source[i][j] != 0f) {
+                if (source[i][j] != 0) {
                     stringBuilder.append(source[i][j]).append("\t");
                 } else {
                     stringBuilder.append(".").append("\t").append("\t").append("\t");
