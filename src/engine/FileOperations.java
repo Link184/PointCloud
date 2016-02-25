@@ -14,7 +14,7 @@ public class FileOperations {
 
     public static StringBuilder readPC(){
         StringBuilder stringBuilder = new StringBuilder();
-        File file = new File("source", "file_easy.xyz");
+        File file = new File("source", "file.xyz");
         try {
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);

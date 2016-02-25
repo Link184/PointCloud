@@ -237,7 +237,7 @@ public class HoughTransform {
                     double theta = t * thetaStep;
 
                     // add the line to the vector 
-                    lines.add(new HoughLine(theta, r));
+                    lines.add(new HoughLine(theta, r, width, height));
 
                 }
             }

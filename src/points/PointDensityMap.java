@@ -1,10 +1,10 @@
 package points;
 
 import engine.FileOperations;
+import engine.Pdf;
 import engine.PointsFilter;
 import hough.HoughLine;
 import hough.HoughTransform;
-import ransac.Line;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -17,8 +17,6 @@ import java.util.Vector;
 
 public class PointDensityMap extends PointsWorker implements Runnable{
 
-    public static double[] lines;
-    public static Line[] lines1;
     private static List<Double> tmp = new ArrayList<Double>();
 
 
@@ -40,15 +38,15 @@ public class PointDensityMap extends PointsWorker implements Runnable{
         int[][] cleanProjectedMatrix = projectedPCTo2DDensMap.clone();
 
         synchronized (PointsWorker.class) {
-            PointsFilter.cleanByHigh(projectedPCTo2DDensMap, projectedPCTo2DHighMap);
+//            PointsFilter.cleanByHigh(projectedPCTo2DDensMap, projectedPCTo2DHighMap);
 
 //
-//            //Clear low density points
-//            filterProjectedMatrix(tolerance, projectedPCTo2DDensMap);
-//            //Increase density of high density regions
-//            PointsFilter.computeMatrixDensity(300, projectedPCTo2DDensMap);
-//            //Clear points lower than projectedMatrix medium value
-//            PointsFilter.clearLowDensityPoints(projectedPCTo2DDensMap);
+            //Clear low density points
+            filterProjectedMatrix(tolerance, projectedPCTo2DDensMap);
+            //Increase density of high density regions
+            PointsFilter.computeMatrixDensity(300, projectedPCTo2DDensMap);
+            //Clear points lower than projectedMatrix medium value
+            PointsFilter.clearLowDensityPoints(projectedPCTo2DDensMap);
             //Clear low density regions
 //            PointsFilter.destroyMetaPoints(projectedPCTo2DDensMap);
 
@@ -65,7 +63,7 @@ public class PointDensityMap extends PointsWorker implements Runnable{
             int count = 0;
             for (int i = 0; i < projectedPCTo2DDensMap.length; i++) {
                 for (int j = 0; j < projectedPCTo2DDensMap[i].length; j++) {
-                    if (projectedPCTo2DDensMap[i][j] > 10f) {
+                    if (projectedPCTo2DDensMap[i][j] > 30) {
                         transform.addPoint(i, j);
                         count++;
                     }
@@ -89,6 +87,14 @@ public class PointDensityMap extends PointsWorker implements Runnable{
             }
             try {
                 ImageIO.write(img, "png", file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Pdf.start(lines, projectedPCTo2DDensMap.length, projectedPCTo2DDensMap[0].length);
+
+            try {
+                ImageIO.write(transform.getHoughArrayImage(), "png", new File("source", "dada.png"));
             } catch (IOException e) {
                 e.printStackTrace();
             }

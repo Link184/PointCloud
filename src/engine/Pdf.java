@@ -48,10 +48,11 @@ public class Pdf {
         PdfContentByte canvas = writer.getDirectContent();
         canvas.setColorStroke(BaseColor.RED);
         canvas.setLineWidth(1);
-//        for (int i = 0; i < vectors.size(); i++) {
-//            canvas.moveTo(vectors.get(i).x1, vectors.get(i).y1);
-//            canvas.lineTo(vectors.get(i).x2, vectors.get(i).y2);
-//        }
+        for (int i = 1; i < vectors.size(); i++) {
+            HoughLine line = vectors.elementAt(i);
+            canvas.moveTo(line.getX1(), line.getY1());
+            canvas.lineTo(line.getX2(), line.getY1());
+        }
         canvas.closePathStroke();
         canvas.setColorFill(BaseColor.BLUE);
         canvas.fill();
