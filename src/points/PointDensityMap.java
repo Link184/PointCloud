@@ -1,13 +1,16 @@
 package points;
 
 import engine.FileOperations;
-import engine.MatrixDithering;
-import engine.Pdf;
 import engine.PointsFilter;
 import hough.HoughLine;
 import hough.HoughTransform;
 import ransac.Line;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -55,14 +58,46 @@ public class PointDensityMap extends PointsWorker implements Runnable{
             FileOperations.exportToFile(projectedPCTo2DDensMap, FileOperations.DENSITY_DENSITY_FILE);
             FileOperations.printImage(projectedPCTo2DDensMap, FileOperations.DENSITY_IMAGE);
 
-            MatrixDithering.floydSteinbergDithering(cleanProjectedMatrix);
+//            MatrixDithering.floydSteinbergDithering(cleanProjectedMatrix);
             FileOperations.printImage(cleanProjectedMatrix, FileOperations.DENSITY_IMAGE_DITHERED);
 
-            HoughTransform transform = new HoughTransform(projectedPCTo2DDensMap);
-            Vector<HoughLine> vectors = transform.getLines(0);
-            System.out.println(vectors.size());
-            System.out.println(transform.getNumPoints());
-            Pdf.start(vectors, projectedPCTo2DDensMap.length, projectedPCTo2DDensMap[0].length);
+            HoughTransform transform = new HoughTransform(projectedPCTo2DDensMap.length, projectedPCTo2DDensMap[0].length);
+            int count = 0;
+            for (int i = 0; i < projectedPCTo2DDensMap.length; i++) {
+                for (int j = 0; j < projectedPCTo2DDensMap[i].length; j++) {
+                    if (projectedPCTo2DDensMap[i][j] > 10f) {
+                        transform.addPoint(i, j);
+                        count++;
+                    }
+                }
+            }
+            System.out.println(count);
+
+            String filename = "hough_image.png";
+            File file = new File("source", filename);
+            // load the file using Java's imageIO library
+            BufferedImage img = new BufferedImage(projectedPCTo2DDensMap.length, projectedPCTo2DDensMap[0].length,
+                    BufferedImage.TYPE_INT_RGB);
+
+            // get the lines out
+            Vector<HoughLine> lines = transform.getLines(300);
+
+            // draw the lines back onto the image
+            for (int j = 0; j < lines.size(); j++) {
+                HoughLine line = lines.elementAt(j);
+                line.draw(img, Color.RED.getRGB());
+            }
+            try {
+                ImageIO.write(img, "png", file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+//            HoughTransform transform = new HoughTransform(projectedPCTo2DDensMap);
+//            Vector<HoughLine> vectors = transform.getLines(0);
+//            System.out.println(vectors.size());
+//            System.out.println(transform.getNumPoints());
+//            Pdf.start(vectors, projectedPCTo2DDensMap.length, projectedPCTo2DDensMap[0].length);
 //            for (int i = 0; i < projectedPCTo2DDensMap.length; i++) {
 //                for (int j = 0; j < projectedPCTo2DDensMap[i].length; j++){
 //                    tmp.add((double) projectedPCTo2DDensMap[i][j]);

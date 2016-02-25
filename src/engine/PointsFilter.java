@@ -134,7 +134,7 @@ public class PointsFilter {
         int count = 0;
         for (int i = 0; i < highMap.length; i++) {
             for (int j = 0; j < highMap[i].length; j++) {
-                if (highMap[i][j] < medHighValue) {
+                if (highMap[i][j] < 2f) {
                     projectedMatrix[i][j] = 0;
                     count++;
                 }
