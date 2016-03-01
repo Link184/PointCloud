@@ -1,8 +1,6 @@
 package points;
 
 import engine.FileOperations;
-import engine.Pdf;
-import engine.PointsFilter;
 import hough.HoughLine;
 import hough.HoughTransform;
 
@@ -41,12 +39,12 @@ public class PointDensityMap extends PointsWorker implements Runnable{
 //            PointsFilter.cleanByHigh(projectedPCTo2DDensMap, projectedPCTo2DHighMap);
 
 //
-            //Clear low density points
-            filterProjectedMatrix(tolerance, projectedPCTo2DDensMap);
-            //Increase density of high density regions
-            PointsFilter.computeMatrixDensity(300, projectedPCTo2DDensMap);
-            //Clear points lower than projectedMatrix medium value
-            PointsFilter.clearLowDensityPoints(projectedPCTo2DDensMap);
+//            //Clear low density points
+//            filterProjectedMatrix(tolerance, projectedPCTo2DDensMap);
+//            //Increase density of high density regions
+//            PointsFilter.computeMatrixDensity(300, projectedPCTo2DDensMap);
+//            //Clear points lower than projectedMatrix medium value
+//            PointsFilter.clearLowDensityPoints(projectedPCTo2DDensMap);
             //Clear low density regions
 //            PointsFilter.destroyMetaPoints(projectedPCTo2DDensMap);
 
@@ -57,7 +55,7 @@ public class PointDensityMap extends PointsWorker implements Runnable{
             FileOperations.printImage(projectedPCTo2DDensMap, FileOperations.DENSITY_IMAGE);
 
 //            MatrixDithering.floydSteinbergDithering(cleanProjectedMatrix);
-            FileOperations.printImage(cleanProjectedMatrix, FileOperations.DENSITY_IMAGE_DITHERED);
+//            FileOperations.printImage(cleanProjectedMatrix, FileOperations.DENSITY_IMAGE_DITHERED);
 
             HoughTransform transform = new HoughTransform(projectedPCTo2DDensMap.length, projectedPCTo2DDensMap[0].length);
             int count = 0;
@@ -91,34 +89,17 @@ public class PointDensityMap extends PointsWorker implements Runnable{
                 e.printStackTrace();
             }
 
-            Pdf.start(lines, projectedPCTo2DDensMap.length, projectedPCTo2DDensMap[0].length);
-
             try {
-                ImageIO.write(transform.getHoughArrayImage(), "png", new File("source", "dada.png"));
+                ImageIO.write(transform.getHoughArrayImage(), "png", new File("hough.png"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-//            HoughTransform transform = new HoughTransform(projectedPCTo2DDensMap);
-//            Vector<HoughLine> vectors = transform.getLines(0);
-//            System.out.println(vectors.size());
-//            System.out.println(transform.getNumPoints());
-//            Pdf.start(vectors, projectedPCTo2DDensMap.length, projectedPCTo2DDensMap[0].length);
-//            for (int i = 0; i < projectedPCTo2DDensMap.length; i++) {
-//                for (int j = 0; j < projectedPCTo2DDensMap[i].length; j++){
-//                    tmp.add((double) projectedPCTo2DDensMap[i][j]);
-//                }
-//            }
-//
-//            lines = new double[tmp.size()];
-//            for (int i = 0; i < tmp.size(); i++) {
-//                lines[i] = tmp.get(i);
-//            }
-//            Ransac ransac = new Ransac();
-////            lines1 = ransac.findLines(PointDensityMap.lines);
-//
-//
-//            TestRansac.main(null);
+//            App.start(projectedPCTo2DDensMap);
+//            Thread ransac = new Thread(new RansacThread(projectedPCTo2DDensMap));
+//            ransac.start();
+
+
         }
     }
 

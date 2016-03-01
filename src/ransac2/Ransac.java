@@ -1,4 +1,4 @@
-package ransac;
+package ransac2;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -120,7 +120,7 @@ public class Ransac<Model, Point> implements ModelMatcher<Model,Point> {
     /**
      * Initialize internal data structures
      */
-    public void initialize( List<Point> dataSet ) {
+    private void initialize( List<Point> dataSet ) {
         bestFitPoints.clear();
 
         if( dataSet.size() > matchToInput.length ) {

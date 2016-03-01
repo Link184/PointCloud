@@ -1,6 +1,5 @@
 import engine.FileOperations;
 import points.PointDensityMap;
-import points.PointHighMap;
 import points.PointsWorker;
 
 import java.util.ArrayList;
@@ -26,9 +25,9 @@ public class Main {
         }
 
         Thread pointDensityMap = new Thread(new PointDensityMap(100, 0));
-        Thread pointHighMap = new Thread(new PointHighMap(100, 0));
+//        Thread pointHighMap = new Thread(new PointHighMap(100, 0));
         pointDensityMap.start();
-        pointHighMap.start();
+//        pointHighMap.start();
 
 
 

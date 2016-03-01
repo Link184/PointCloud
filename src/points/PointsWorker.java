@@ -176,4 +176,8 @@ public abstract class PointsWorker implements Points{
     public static List<float[]> getAllPoints() {
         return allPoints;
     }
+
+    public static int[][] getProjectedPCTo2DDensMap() {
+        return projectedPCTo2DDensMap;
+    }
 }
