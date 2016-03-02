@@ -1,5 +1,7 @@
 package points;
 
+import configuration.Configuration;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,12 +26,11 @@ public abstract class PointsWorker implements Points{
 
     protected static float[][] projectedPCTo2DHighMap;
     protected static int[][] projectedPCTo2DDensMap;
+    protected static int[][] vectorMatrix;
 
-    protected final Object syncObj = new Object();
-
-    public PointsWorker(int mesUnit, int tolerance) {
-        this.mesUnits = mesUnit;
-        this.tolerance = tolerance;
+    public PointsWorker(Configuration config) {
+        this.mesUnits = config.getPrecision();
+        this.tolerance = config.getTolerance();
         float[] extremes = extremeValues();
         maxX = extremes[3]; minX = extremes[0];
         maxY = extremes[4]; minY = extremes[1];
@@ -48,6 +49,7 @@ public abstract class PointsWorker implements Points{
 
         projectedPCTo2DHighMap = new float[yCapacity + 1][xCapacity + 1];
         projectedPCTo2DDensMap = new int[yCapacity + 1][xCapacity + 1];
+        vectorMatrix = new int[yCapacity + 1][xCapacity + 1];
 
         printStatistics();
     }
@@ -179,5 +181,9 @@ public abstract class PointsWorker implements Points{
 
     public static int[][] getProjectedPCTo2DDensMap() {
         return projectedPCTo2DDensMap;
+    }
+
+    public static int[][] getVectorMatrix() {
+        return vectorMatrix;
     }
 }

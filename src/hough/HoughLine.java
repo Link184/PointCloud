@@ -1,5 +1,7 @@
 package hough;
 
+import points.PointsWorker;
+
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
@@ -21,7 +23,6 @@ public class HoughLine extends Line2D.Float{
   public HoughLine(double theta, double r, int width, int height) {
     this.theta = theta;
     this.r = r;
-
 // During processing h_h is doubled so that -ve r values
     int houghHeight = (int) (Math.sqrt(2) * Math.max(height, width)) / 2;
 
@@ -77,6 +78,7 @@ public class HoughLine extends Line2D.Float{
       for (int y = 0; y < height; y++) {
         int x = (int) ((((r - houghHeight) - ((y - centerY) * tsin)) / tcos) + centerX);
         if (x < width && x >= 0) {
+          PointsWorker.getVectorMatrix()[x][y] = color;
           image.setRGB(x, y, color);
         }
       }
@@ -85,9 +87,11 @@ public class HoughLine extends Line2D.Float{
       for (int x = 0; x < width; x++) {
         int y = (int) ((((r - houghHeight) - ((x - centerX) * tcos)) / tsin) + centerY);
         if (y < height && y >= 0) {
+          PointsWorker.getVectorMatrix()[x][y] = color;
           image.setRGB(x, y, color);
         }
       }
     }
+
   }
 }

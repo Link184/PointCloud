@@ -1,25 +1,17 @@
 package points;
 
+import configuration.Configuration;
 import engine.FileOperations;
-import hough.HoughLine;
-import hough.HoughTransform;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class PointDensityMap extends PointsWorker implements Runnable{
 
     private static List<Double> tmp = new ArrayList<Double>();
 
-
-    public PointDensityMap(int mesUnit, int tolerance) {
-        super(mesUnit, tolerance);
+    public PointDensityMap(Configuration config) {
+        super(config);
     }
 
 
@@ -56,44 +48,6 @@ public class PointDensityMap extends PointsWorker implements Runnable{
 
 //            MatrixDithering.floydSteinbergDithering(cleanProjectedMatrix);
 //            FileOperations.printImage(cleanProjectedMatrix, FileOperations.DENSITY_IMAGE_DITHERED);
-
-            HoughTransform transform = new HoughTransform(projectedPCTo2DDensMap.length, projectedPCTo2DDensMap[0].length);
-            int count = 0;
-            for (int i = 0; i < projectedPCTo2DDensMap.length; i++) {
-                for (int j = 0; j < projectedPCTo2DDensMap[i].length; j++) {
-                    if (projectedPCTo2DDensMap[i][j] > 30) {
-                        transform.addPoint(i, j);
-                        count++;
-                    }
-                }
-            }
-            System.out.println(count);
-
-            String filename = "hough_image.png";
-            File file = new File("source", filename);
-            // load the file using Java's imageIO library
-            BufferedImage img = new BufferedImage(projectedPCTo2DDensMap.length, projectedPCTo2DDensMap[0].length,
-                    BufferedImage.TYPE_INT_RGB);
-
-            // get the lines out
-            Vector<HoughLine> lines = transform.getLines(300);
-
-            // draw the lines back onto the image
-            for (int j = 0; j < lines.size(); j++) {
-                HoughLine line = lines.elementAt(j);
-                line.draw(img, Color.RED.getRGB());
-            }
-            try {
-                ImageIO.write(img, "png", file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                ImageIO.write(transform.getHoughArrayImage(), "png", new File("hough.png"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
 //            App.start(projectedPCTo2DDensMap);
 //            Thread ransac = new Thread(new RansacThread(projectedPCTo2DDensMap));

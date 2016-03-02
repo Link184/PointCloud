@@ -1,5 +1,6 @@
 package points;
 
+import configuration.Configuration;
 import engine.FileOperations;
 
 import java.util.List;
@@ -8,9 +9,10 @@ public class PointHighMap extends PointsWorker implements Runnable{
     private float[][] negativeHighValues = new float[yCapacity + 1][xCapacity + 1];
     private float[][] positiveHighValues = new float[yCapacity + 1][xCapacity + 1];
 
-    public PointHighMap(int mesUnit, int tolerance) {
-        super(mesUnit, tolerance);
+    public PointHighMap(Configuration config) {
+        super(config);
     }
+
 
     @Override
     public void run() {

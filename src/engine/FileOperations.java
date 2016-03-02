@@ -116,4 +116,19 @@ public class FileOperations {
             e.printStackTrace();
         }
     }
+
+    public static void printVectorImage(int[][] source, String fileName) {
+        BufferedImage image = new BufferedImage(source.length + 1, source[0].length + 1, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < source.length; i++) {
+            for (int j = 0; j < source[i].length; j++) {
+                image.setRGB(i, j, source[i][j]);
+            }
+        }
+        File imageFile = new File("source", fileName);
+        try {
+            ImageIO.write(image, "png", imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
