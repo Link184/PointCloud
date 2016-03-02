@@ -1,7 +1,9 @@
+import configuration.Configuration;
 import engine.FileOperations;
 import points.PointDensityMap;
 import points.PointHighMap;
 import points.PointsWorker;
+import points.VectorMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +27,14 @@ public class Main {
             PointsWorker.getAllPoints().add(new float[]{allPoints.get(3*i), allPoints.get(3*i+1), allPoints.get(3*i+2)});
         }
 
-        Thread pointDensityMap = new Thread(new PointDensityMap(100, 0));
-        Thread pointHighMap = new Thread(new PointHighMap(100, 0));
+        Configuration config = new Configuration(Configuration.Precision.CENTIMETERS, 0);
+
+        Thread pointDensityMap = new Thread(new PointDensityMap(config));
+        Thread pointHighMap = new Thread(new PointHighMap(config));
+        Thread vectorMap = new Thread(new VectorMap(config));
         pointDensityMap.start();
         pointHighMap.start();
-
+        vectorMap.start();
 
 
 //        double[] points = new double[allPoints.size()];
