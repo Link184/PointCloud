@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -55,7 +56,7 @@ public class VectorMap extends PointsWorker implements Runnable{
                     BufferedImage.TYPE_INT_RGB);
 
             // get the lines out
-            Vector<HoughLine> lines = transform.getLines(200);
+            Vector<HoughLine> lines = transform.getLines(config.getThreshold());
 
             // draw the lines back onto the image
             for (int j = 0; j < lines.size(); j++) {
@@ -73,23 +74,46 @@ public class VectorMap extends PointsWorker implements Runnable{
             }
 
             FileOperations.printVectorImage(vectorMatrix, "VectorImage.png");
-            FileOperations.printVectorImage(getIntersection(vectorMatrix), "VectorPointsImage.png");
+            FileOperations.exportToSVG(lines, FileOperations.SVG_FILE);
+
+            List<int[]> intersections = findIntersections(lines);
+
+            FileOperations.printImage(buildIntersectionsMap(intersections, vectorMatrix), FileOperations.INTERSECTIONS_MAP);
         }
     }
 
-    public int[][] getIntersection(int[][] vectorMatrix) {
-        for (int i = 1; i < vectorMatrix.length - 1; i++) {
-            for (int j = 1; j < vectorMatrix[i].length - 1; j++) {
-                int topPoint = vectorMatrix[i-1][j];
-                int botPoint = vectorMatrix[i+1][j];
-                int leftPoint = vectorMatrix[i][j-1];
-                int rightPoint = vectorMatrix[i][j+1];
-                int medRegionValue = (topPoint + botPoint + leftPoint + rightPoint) / 4;
-                if (medRegionValue != vectorMatrix[i][j]) {
-                    vectorMatrix[i][j] = 0;
+    public List<int[]> findIntersections(Vector<HoughLine> vectors) {
+        List<int[]> intersections = new ArrayList<int[]>();
+        for (int i = 0; i < vectors.size() - 1; i++){
+            HoughLine line = vectors.elementAt(i);
+            for (int j = i + 1; j < vectors.size(); j++) {
+                HoughLine line2 = vectors.elementAt(j);
+//                double firstY = line.getSlope() * line.getX2() + line.getInterceptor();
+//                double secondY = line2.getSlope() * line.getX2() + line2.getInterceptor();
+                int intersectionX = (int) ((line2.getInterceptor() - line.getInterceptor()) / (line.getSlope() - line2.getSlope()));
+                int intersectionY = (int) (line.getSlope() * intersectionX + line.getInterceptor());
+                intersections.add(new int[]{intersectionX, intersectionY});
+            }
+        }
+        return intersections;
+    }
+
+    public int[][] buildIntersectionsMap(List<int[]> intersections, int[][] sourceMatrix) {
+        int count = 0;
+        int[][] intersectionsMap = new int[sourceMatrix.length][sourceMatrix[0].length];
+        for (int i = 0; i < sourceMatrix.length; i++) {
+            for (int j = 0; j < sourceMatrix[i].length; j++) {
+                for (int[] ints: intersections) {
+                    if (Math.abs(ints[0]) == i && Math.abs(ints[1]) == j) {
+                        intersectionsMap[i][j] = Color.BLUE.getRGB();
+                        count++;
+                    }
                 }
             }
         }
-        return vectorMatrix;
+
+        System.out.println("If count: " + count);
+        return intersectionsMap;
     }
+
 }

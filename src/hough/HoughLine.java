@@ -17,6 +17,10 @@ public class HoughLine extends Line2D.Float{
   protected double theta;
   protected double r;
 
+  // Line equation: y = slope * x + b
+  protected double slope;
+  protected double interceptor;
+
   /**
    * Initialises the hough line
    */
@@ -35,7 +39,7 @@ public class HoughLine extends Line2D.Float{
     double tcos = Math.cos(theta);
 
     if (theta < Math.PI * 0.25 || theta > Math.PI * 0.75) {
-      int x1=0, y1=0;
+      int x1=0, y1= 0;
       int x2=0, y2=height-1;
 
       x1=(int) ((((r - houghHeight) - ((y1 - centerY) * tsin)) / tcos) + centerX);
@@ -44,7 +48,7 @@ public class HoughLine extends Line2D.Float{
       setLine(x1, y1, x2, y2);
     }
     else {
-      int x1=0, y1=0;
+      int x1= 0, y1=0;
       int x2=width-1, y2=0;
 
       y1=(int) ((((r - houghHeight) - ((x1 - centerX) * tcos)) / tsin) + centerY);
@@ -52,6 +56,8 @@ public class HoughLine extends Line2D.Float{
 
       setLine(x1, y1, x2, y2);
     }
+    slope = (getY2() - getY1()) / (getX2() - getX1());
+    interceptor = getY1() - slope * getX1();
   }
 
   /**
@@ -94,4 +100,13 @@ public class HoughLine extends Line2D.Float{
     }
 
   }
+
+  public double getSlope() {
+    return slope;
+  }
+
+  public double getInterceptor() {
+    return interceptor;
+  }
+
 }

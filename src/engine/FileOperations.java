@@ -1,20 +1,31 @@
 package engine;
 
+import hough.HoughLine;
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.batik.svggen.SVGGraphics2DIOException;
+import org.apache.batik.util.SVGConstants;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Vector;
 
 public class FileOperations {
     public static final String DENSITY_IMAGE = "density_image.png";
     public static final String DENSITY_IMAGE_DITHERED = "density_image_dithered.png";
     public static final String HIGH_IMAGE = "high_image.png";
     public static final String HIGH_IMAGE_DITHERED = "high_image_dithered.png";
-    public static final String DENSITY_DENSITY_FILE = "fileDens.txt";
+    public static final String DENSITY_FILE = "fileDens.txt";
     public static final String DENSITY_HIGH_FILE = "fileHigh.txt";
+    public static final String INTERSECTIONS_MAP = "intersection_iamge.png";
+    public static final String SVG_FILE = "vectors.svg";
 
-    public static StringBuilder readPC(){
+    public static StringBuilder readPC(String fileName){
         StringBuilder stringBuilder = new StringBuilder();
-        File file = new File("source", "file_easy.xyz");
+        File file = new File("source", fileName);
         try {
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -127,6 +138,42 @@ public class FileOperations {
         File imageFile = new File("source", fileName);
         try {
             ImageIO.write(image, "png", imageFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void exportToSVG(Vector<HoughLine> vectors, String fileName) {
+        DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+        Document document = domImpl.createDocument(SVGConstants.SVG_NAMESPACE_URI, "svg", null);
+        SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+        svgGenerator.scale(1, 1);
+
+        for (int i = 0; i < vectors.size(); i++) {
+//            svgGenerator.draw(vectors.elementAt(i));
+            HoughLine line = vectors.elementAt(i);
+            int y1 = (int) (line.getSlope() * line.getX1() + line.getInterceptor());
+            int y2 = (int) (line.getSlope() * line.getX2() + line.getInterceptor());
+            int x1 = (int) ((y1 - line.getInterceptor()) / line.getSlope());
+            int x2 = (int) ((y2 - line.getInterceptor()) / line.getSlope());
+
+            svgGenerator.drawLine(x1, y1, x2, y2);
+        }
+
+        try {
+            OutputStream outputStream = new FileOutputStream(new File("source", fileName));
+            Writer out = new OutputStreamWriter(outputStream, "UTF-8");
+            svgGenerator.stream(out);
+            outputStream.flush();
+            outputStream.close();
+            out.flush();
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (SVGGraphics2DIOException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

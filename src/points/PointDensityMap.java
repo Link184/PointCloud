@@ -43,7 +43,7 @@ public class PointDensityMap extends PointsWorker implements Runnable{
 
 //        PointsFilter.preparesFinalMatrix(projectedPCTo2DDensMap);
 //
-            FileOperations.exportToFile(projectedPCTo2DDensMap, FileOperations.DENSITY_DENSITY_FILE);
+            FileOperations.exportToFile(projectedPCTo2DDensMap, FileOperations.DENSITY_FILE);
             FileOperations.printImage(projectedPCTo2DDensMap, FileOperations.DENSITY_IMAGE);
 
 //            MatrixDithering.floydSteinbergDithering(cleanProjectedMatrix);

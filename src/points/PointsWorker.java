@@ -1,11 +1,13 @@
 package points;
 
 import configuration.Configuration;
+import engine.FileOperations;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class PointsWorker implements Points{
+    protected Configuration config;
     protected static List<float[]> allPoints = new ArrayList<float[]>();
 
     protected int mesUnits = 10;
@@ -29,8 +31,12 @@ public abstract class PointsWorker implements Points{
     protected static int[][] vectorMatrix;
 
     public PointsWorker(Configuration config) {
+        this.config = config;
         this.mesUnits = config.getPrecision();
         this.tolerance = config.getTolerance();
+        if (allPoints.isEmpty()) {
+            loadPC(config);
+        }
         float[] extremes = extremeValues();
         maxX = extremes[3]; minX = extremes[0];
         maxY = extremes[4]; minY = extremes[1];
@@ -52,6 +58,24 @@ public abstract class PointsWorker implements Points{
         vectorMatrix = new int[yCapacity + 1][xCapacity + 1];
 
         printStatistics();
+    }
+
+    protected void loadPC(Configuration config){
+        StringBuilder pointCloud = FileOperations.readPC(config.getSourceFile());
+
+        String[] stringLinesNumber = pointCloud.toString().split("\n");
+        List<Float> allPoints = new ArrayList<Float>();
+
+        for (int i = 0; i < stringLinesNumber.length; i++) {
+            String[] split = stringLinesNumber[i].split("(\t)");
+            for (String s: split) {
+                allPoints.add(Float.valueOf(s));
+            }
+        }
+
+        for (int i=0;i<(allPoints.size()/3); i++) {
+            PointsWorker.getAllPoints().add(new float[]{allPoints.get(3*i), allPoints.get(3*i+1), allPoints.get(3*i+2)});
+        }
     }
 
     protected List<float[]> sortSurfaceZX(int surfaceDepth){

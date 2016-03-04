@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.Vector;
 
+@Deprecated
 public class Pdf {
     private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18,
             Font.BOLD);
@@ -23,6 +24,7 @@ public class Pdf {
     private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12,
             Font.BOLD);
 
+    @Deprecated
     public static void start(Vector<HoughLine> vectors, int width, int height) {
         try {
             Rectangle size = new Rectangle(width, height);
@@ -48,7 +50,7 @@ public class Pdf {
         PdfContentByte canvas = writer.getDirectContent();
         canvas.setColorStroke(BaseColor.RED);
         canvas.setLineWidth(1);
-        for (int i = 1; i < vectors.size(); i++) {
+        for (int i = 0; i < vectors.size(); i++) {
             HoughLine line = vectors.elementAt(i);
             canvas.moveTo(line.x1, line.y1);
             canvas.lineTo(line.x2, line.y2);
