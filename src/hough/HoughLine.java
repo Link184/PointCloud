@@ -60,6 +60,10 @@ public class HoughLine extends Line2D.Float{
     interceptor = getY1() - slope * getX1();
   }
 
+  public HoughLine(int x1, int y1, int x2, int y2) {
+    setLine(x1, y1, x2, y2);
+  }
+
   /**
    * Draws the line on the image of your choice with the RGB colour of your choice.
    */
