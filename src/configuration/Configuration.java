@@ -6,6 +6,13 @@ public class Configuration {
     private int precision = 100;
     private int threshold = 0;
 
+    /**
+     *
+     * @param sourceFile file with point cloud data
+     * @param precision precision of point cloud segmentation
+     * @param tolerance directly proportionality with program speed
+     * @param threshold threshold for hough transformation algorithm
+     */
     public Configuration(String sourceFile, Precision precision, int tolerance, int threshold) {
         this.sourceFile = sourceFile;
         this.tolerance = tolerance;

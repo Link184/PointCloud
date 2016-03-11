@@ -11,6 +11,7 @@ import org.w3c.dom.Document;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.List;
 import java.util.Vector;
 
 public class FileOperations {
@@ -143,7 +144,7 @@ public class FileOperations {
         }
     }
 
-    public static void exportToSVG(Vector<HoughLine> vectors, String fileName) {
+    public static void exportToSVG(Vector<HoughLine> vectors, List<int[]> intersections, String fileName) {
         DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
         Document document = domImpl.createDocument(SVGConstants.SVG_NAMESPACE_URI, "svg", null);
         SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
@@ -159,6 +160,12 @@ public class FileOperations {
 
             svgGenerator.drawLine(x1, y1, x2, y2);
         }
+
+        //draw intersection points
+        if (intersections != null)
+            for (int[] i: intersections) {
+                svgGenerator.drawString("P", i[0], i[1]);
+            }
 
         try {
             OutputStream outputStream = new FileOutputStream(new File("source", fileName));
